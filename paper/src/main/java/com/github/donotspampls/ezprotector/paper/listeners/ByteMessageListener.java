@@ -18,31 +18,33 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.charset.StandardCharsets;
 
 public class ByteMessageListener implements PluginMessageListener {
 
     private final Plugin plugin;
-    private final FileConfiguration config;
     private final ExecutionUtil execUtil;
     private final MessageUtil msgUtil;
 
-    public ByteMessageListener(Plugin plugin, FileConfiguration config, ExecutionUtil execUtil, MessageUtil msgUtil) {
+    public ByteMessageListener(Plugin plugin, ExecutionUtil execUtil, MessageUtil msgUtil) {
         this.plugin = plugin;
-        this.config = config;
         this.execUtil = execUtil;
         this.msgUtil = msgUtil;
     }
 
     @Override
-    public void onPluginMessageReceived(String channel, Player player, byte[] value) {
+    public void onPluginMessageReceived(String ch, @NotNull Player player, byte[] value) {
+        String channel = ch.toLowerCase();
+        FileConfiguration config = plugin.getConfig();
+
         if (config.getBoolean("mods.5zig.block")) block5Zig(player, channel);
         if (config.getBoolean("mods.bettersprinting.block")) blockBSM(player, channel);
 
         if (channel.equalsIgnoreCase(Main.MCBRAND)) {
             // Converts the byte array to a string called "brand"
-            String brand = new String(value, StandardCharsets.UTF_8);
+            String brand = new String(value, StandardCharsets.UTF_8).toLowerCase();
 
             if (config.getBoolean("mods.fabric.block")) blockFabric(player, brand, config);
             if (config.getBoolean("mods.forge.block")) blockForge(player, brand, config);
@@ -50,9 +52,7 @@ public class ByteMessageListener implements PluginMessageListener {
             if (config.getBoolean("mods.rift.block")) blockRift(player, brand, config);
         }
 
-        if (config.getBoolean("mods.schematica.block") && !player.hasPermission("ezprotector.bypass.mod.schematica")) // TODO: add channel check
-            player.sendPluginMessage(plugin, Main.SCHEMATICA, PacketUtil.getSchematicaPayload());
-
+        if (config.getBoolean("mods.schematica.block")) blockSchematica(player, channel);
         if (config.getBoolean("mods.wdl.block")) blockWDL(player, channel);
     }
 
@@ -62,8 +62,9 @@ public class ByteMessageListener implements PluginMessageListener {
     }
 
     private void blockBSM(Player player, String channel) {
-        if (channel.equalsIgnoreCase(Main.BSM) && !player.hasPermission("ezprotector.bypass.mod.bettersprinting"))
-            player.sendPluginMessage(plugin, channel, new byte[] {1});
+        if (channel.equalsIgnoreCase(Main.BSM) && !player.hasPermission("ezprotector.bypass.mod.bettersprinting")) {
+            player.sendPluginMessage(plugin, channel, new byte[]{1});
+        }
     }
 
     private void blockFabric(Player player, String brand, FileConfiguration config) {
@@ -87,7 +88,7 @@ public class ByteMessageListener implements PluginMessageListener {
     }
 
     private void blockLiteLoader(Player player, String brand, FileConfiguration config) {
-        if ((brand.equalsIgnoreCase("LiteLoader") || brand.contains("Lite")) && !player.hasPermission("ezprotector.bypass.mod.liteloader")) {
+        if ((brand.equalsIgnoreCase("LiteLoader") || brand.contains("lite")) && !player.hasPermission("ezprotector.bypass.mod.liteloader")) {
             String punishCommand = config.getString("mods.liteloader.punish-command");
             execUtil.executeConsoleCommand(msgUtil.placeholders(punishCommand, player, null, null));
 
@@ -104,6 +105,11 @@ public class ByteMessageListener implements PluginMessageListener {
             String notifyMessage = msgUtil.placeholders(config.getString("mods.rift.warning-message"), player, null, null);
             execUtil.notifyAdmins(notifyMessage, "ezprotector.notify.mod.rift");
         }
+    }
+
+    private void blockSchematica(Player player, String channel) {
+        if (channel.equalsIgnoreCase(Main.SCHEMATICA) && !player.hasPermission("ezprotector.bypass.mod.schematica"))
+            player.sendPluginMessage(plugin, channel, PacketUtil.getSchematicaPayload());
     }
 
     private void blockWDL(Player player, String channel) {

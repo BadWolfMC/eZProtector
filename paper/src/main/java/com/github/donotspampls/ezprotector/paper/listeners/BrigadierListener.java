@@ -10,6 +10,7 @@
 
 package com.github.donotspampls.ezprotector.paper.listeners;
 
+import com.github.donotspampls.ezprotector.paper.Main;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,9 +21,9 @@ import java.util.List;
 
 public class BrigadierListener implements Listener {
 
-    private final FileConfiguration config;
-    public BrigadierListener(FileConfiguration config) {
-        this.config = config;
+    private final Main plugin;
+    public BrigadierListener(Main plugin) {
+        this.plugin = plugin;
     }
 
     /**
@@ -32,9 +33,11 @@ public class BrigadierListener implements Listener {
      */
     @EventHandler
     public void onCommandSend(PlayerCommandSendEvent event) {
+        FileConfiguration config = plugin.getConfig();
+        
         if (config.getBoolean("tab-completion.blocked")) {
-            final Player player = event.getPlayer();
-            final List<String> blocked = config.getStringList("tab-completion.commands");
+            Player player = event.getPlayer();
+            List<String> blocked = config.getStringList("tab-completion.commands");
 
             if (!config.getBoolean("tab-completion.whitelist"))
                 event.getCommands().removeIf(cmd ->

@@ -14,8 +14,11 @@ import com.github.donotspampls.ezprotector.paper.listeners.*;
 import com.github.donotspampls.ezprotector.paper.utilities.ExecutionUtil;
 import com.github.donotspampls.ezprotector.paper.utilities.MessageUtil;
 import com.github.donotspampls.ezprotector.paper.utilities.PaperLib;
-import org.bukkit.configuration.file.FileConfiguration;
+import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 public class Main extends JavaPlugin {
 
@@ -27,6 +30,10 @@ public class Main extends JavaPlugin {
     public static String WDLINIT;
     public static String WDLCONTROL;
 
+    private boolean papi = false; // is PlaceholderAPI available?
+
+    private MessageUtil msgUtil;
+
     @Override
     public void onEnable() {
         if (!getServer().getBukkitVersion().matches("1\\.1[2-9](.\\d)?-(R0.1-)?SNAPSHOT")) {
@@ -34,11 +41,12 @@ public class Main extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
         } else {
             saveDefaultConfig();
-            FileConfiguration config = getConfig();
+
+            if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) papi = true;
 
             ExecutionUtil execUtil = new ExecutionUtil(getServer());
-            MessageUtil msgUtil = new MessageUtil(config, execUtil);
-            ByteMessageListener bml = new ByteMessageListener(this, config, execUtil, msgUtil);
+            msgUtil = new MessageUtil(this, execUtil, papi);
+            ByteMessageListener bml = new ByteMessageListener(this, execUtil, msgUtil);
 
             // Check if the server is 1.13 or above
             boolean newerversion;
@@ -58,18 +66,7 @@ public class Main extends JavaPlugin {
                 WDLINIT = "WDL|INIT";
                 WDLCONTROL = "WDL|CONTROL";
 
-                getServer().getMessenger().registerIncomingPluginChannel(this, ZIG, bml);
-                getServer().getMessenger().registerIncomingPluginChannel(this, BSM, bml);
-                getServer().getMessenger().registerIncomingPluginChannel(this, MCBRAND, bml);
-                getServer().getMessenger().registerIncomingPluginChannel(this, SCHEMATICA, bml);
-                getServer().getMessenger().registerIncomingPluginChannel(this, WDLINIT, bml);
-
-                getServer().getMessenger().registerOutgoingPluginChannel(this, ZIG);
-                getServer().getMessenger().registerOutgoingPluginChannel(this, BSM);
-                getServer().getMessenger().registerOutgoingPluginChannel(this, SCHEMATICA);
-                getServer().getMessenger().registerOutgoingPluginChannel(this, WDLCONTROL);
-
-                getServer().getPluginManager().registerEvents(new TabCompletionListener(config), this);
+                getServer().getPluginManager().registerEvents(new TabCompletionListener(this), this);
             } else {
                 ZIG = "the5zigmod:5zig_set";
                 BSM = "bsm:settings";
@@ -78,28 +75,47 @@ public class Main extends JavaPlugin {
                 WDLINIT = "wdl:init";
                 WDLCONTROL = "wdl:control";
 
-                getServer().getMessenger().registerIncomingPluginChannel(this, ZIG, bml);
-                getServer().getMessenger().registerIncomingPluginChannel(this, BSM, bml);
-                getServer().getMessenger().registerIncomingPluginChannel(this, MCBRAND, bml);
-                getServer().getMessenger().registerIncomingPluginChannel(this, SCHEMATICA, bml);
-                getServer().getMessenger().registerIncomingPluginChannel(this, WDLINIT, bml);
-
-                getServer().getMessenger().registerOutgoingPluginChannel(this, ZIG);
-                getServer().getMessenger().registerOutgoingPluginChannel(this, BSM);
-                getServer().getMessenger().registerOutgoingPluginChannel(this, SCHEMATICA);
-                getServer().getMessenger().registerOutgoingPluginChannel(this, WDLCONTROL);
-
-                getServer().getPluginManager().registerEvents(new BrigadierListener(config), this);
+                getServer().getPluginManager().registerEvents(new BrigadierListener(this), this);
             }
 
-            getServer().getPluginManager().registerEvents(new CustomCommands(config, msgUtil), this);
-            getServer().getPluginManager().registerEvents(new FakeCommands(config, msgUtil), this);
-            getServer().getPluginManager().registerEvents(new HiddenSyntaxes(config, msgUtil), this);
-            getServer().getPluginManager().registerEvents(new PlayerJoinListener(config), this);
+            getCommand("ezp").setExecutor(this);
+
+            getServer().getMessenger().registerIncomingPluginChannel(this, ZIG, bml);
+            getServer().getMessenger().registerIncomingPluginChannel(this, BSM, bml);
+            getServer().getMessenger().registerIncomingPluginChannel(this, MCBRAND, bml);
+            getServer().getMessenger().registerIncomingPluginChannel(this, SCHEMATICA, bml);
+            getServer().getMessenger().registerIncomingPluginChannel(this, WDLINIT, bml);
+
+            getServer().getMessenger().registerOutgoingPluginChannel(this, ZIG);
+            getServer().getMessenger().registerOutgoingPluginChannel(this, BSM);
+            getServer().getMessenger().registerOutgoingPluginChannel(this, SCHEMATICA);
+            getServer().getMessenger().registerOutgoingPluginChannel(this, WDLCONTROL);
+
+            getServer().getPluginManager().registerEvents(new CustomCommands(this), this);
+            getServer().getPluginManager().registerEvents(new FakeCommands(this), this);
+            getServer().getPluginManager().registerEvents(new HiddenSyntaxes(this), this);
+            getServer().getPluginManager().registerEvents(new PlayerJoinListener(this), this);
 
             // Suggest Paper to unsuspecting server owners
             PaperLib.suggestPaper(this);
         }
+    }
+
+    @Override
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
+        if (args.length != 1) return false;
+
+        if (args[0].equals("reload")) {
+            reloadConfig();
+            sender.sendMessage(new TextComponent("Config reloaded!"));
+            return true;
+        }
+
+        return false;
+    }
+
+    public MessageUtil getMsgUtil() {
+        return msgUtil;
     }
 
 }
