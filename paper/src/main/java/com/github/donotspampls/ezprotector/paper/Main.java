@@ -36,6 +36,10 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        if (!getServer().getBukkitVersion().matches("1\\.0[2-9](.\\d)?-(R0.1-)?SNAPSHOT")) {
+            getLogger().severe("eZProtector is not supported on versions lower than 1.12.2!");
+            getServer().getPluginManager().disablePlugin(this);
+        } else {
         try {
             saveDefaultConfig();
 
@@ -55,7 +59,7 @@ public class Main extends JavaPlugin {
             }
 
             // Set mod channels
-            try {
+            if (!newerversion) {
                 ZIG = "5zig_Set";
                 BSM = "BSM";
                 MCBRAND = "MC|Brand";
