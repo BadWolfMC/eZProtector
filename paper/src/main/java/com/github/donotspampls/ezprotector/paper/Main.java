@@ -36,11 +36,10 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        if (!getServer().getBukkitVersion().matches("1\\.0[2-9](.\\d)?-(R0.1-)?SNAPSHOT")) {
+        if (!getServer().getBukkitVersion().matches("1.1[0-2].[0-4]-R0.[1-9]-SNAPSHOT")) {
             getLogger().severe("eZProtector is not supported on versions lower than 1.12.2!");
             getServer().getPluginManager().disablePlugin(this);
         } else {
-        try {
             saveDefaultConfig();
 
             if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) papi = true;
