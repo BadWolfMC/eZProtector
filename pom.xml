@@ -9,7 +9,6 @@
 
     <modules>
         <module>paper</module>
-        <module>sponge</module>
         <module>waterfall</module>
         <module>velocity</module>
     </modules>
@@ -45,10 +44,6 @@
         <repository>
             <id>paper-repo</id>
             <url>https://papermc.io/repo/repository/maven-public/</url>
-        </repository>
-        <repository>
-            <id>sponge-repo</id>
-            <url>https://repo.spongepowered.org/maven</url>
         </repository>
         <repository>
             <id>velocity-repo</id>
