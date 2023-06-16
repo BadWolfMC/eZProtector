@@ -10,7 +10,6 @@
     <modules>
         <module>paper</module>
         <module>waterfall</module>
-        <module>velocity</module>
     </modules>
 
     <name>eZProtector</name>
@@ -44,10 +43,6 @@
         <repository>
             <id>paper-repo</id>
             <url>https://papermc.io/repo/repository/maven-public/</url>
-        </repository>
-        <repository>
-            <id>velocity-repo</id>
-            <url>https://nexus.velocitypowered.com/repository/maven-public/</url>
         </repository>
         <repository>
             <id>placeholderapi</id>
