@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Elytrium, DoNotSpamPls
+ * Copyright (C) 2021 DoNotSpamPls
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,13 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.elytrium.ezprotector.shared;
+package com.donotspampls.ezprotector.shared;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-import net.elytrium.ezprotector.BuildConstants;
-import net.elytrium.ezprotector.shared.config.Config;
+import com.donotspampls.ezprotector.BuildConstants;
+import com.donotspampls.ezprotector.shared.config.Config;
 
 public class Settings extends Config {
 
