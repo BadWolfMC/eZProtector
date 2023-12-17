@@ -16,7 +16,7 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.command.CommandExecuteEvent;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.ComponentSerializer;
 
 public class FakeCommands {
@@ -58,9 +58,9 @@ public class FakeCommands {
 
                     TextComponent.Builder output = TextComponent.builder("Plugins (" + pluginCount + "): ");
                     for (int i = 0; i < pluginCount; i++) {
-                        output.append(plugins[i], TextColor.GREEN);
+                        output.append(Component.text(plugins[i], NamedTextColor.GREEN));
                         if (i + 1 < pluginCount) {
-                            output.append(TextComponent.of(", ", TextColor.WHITE));
+                            output.append(Component.text(", ", NamedTextColor.WHITE));
                         }
                     }
 
