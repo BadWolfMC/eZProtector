@@ -15,13 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.donotspampls.ezprotector.velocity.listeners;
+package com.donotspampls.ezprotector.velocity.listeners;
 
 import com.moandjiezana.toml.Toml;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.command.CommandExecuteEvent;
 import com.velocitypowered.api.proxy.Player;
-import net.donotspampls.ezprotector.velocity.utilities.MessageUtil;
+import com.donotspampls.ezprotector.velocity.utilities.MessageUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
