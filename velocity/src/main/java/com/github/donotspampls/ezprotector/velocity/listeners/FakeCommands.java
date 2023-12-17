@@ -15,9 +15,9 @@ import com.moandjiezana.toml.Toml;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.command.CommandExecuteEvent;
 import com.velocitypowered.api.proxy.Player;
-import net.kyori.text.TextComponent;
-import net.kyori.text.format.TextColor;
-import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.serializer.ComponentSerializer;
 
 public class FakeCommands {
 
@@ -44,7 +44,7 @@ public class FakeCommands {
 
                     String version = config.getString("custom-version.version");
                     player.sendMessage(
-                            LegacyComponentSerializer.legacy().deserialize("This server is running server version " + version, '&')
+                            ComponentSerializer.deserialize("This server is running server version " + version, '&')
                     );
 
                     msgUtil.notifyAdmins("custom-version", player, command, "command.version");
