@@ -16,7 +16,7 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.command.CommandExecuteEvent;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.text.TextComponent;
-import net.kyori.text.format.TextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.serializer.ComponentSerializer;
 
 public class FakeCommands {
