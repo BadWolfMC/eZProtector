@@ -1,4 +1,4 @@
-/*
+ /*
  * eZProtector - Copyright (C) 2018-2020 DoNotSpamPls
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
@@ -56,7 +56,7 @@ public class FakeCommands {
                     String[] plugins = config.getString("custom-plugins.plugins").split(", ");
                     int pluginCount = plugins.length;
 
-                    TextComponent.Builder output = TextComponent.builder("Plugins (" + pluginCount + "): ");
+                    TextComponent.Builder output = Component.text().append(Component.text("Plugins (" + pluginCount + "): "));
                     for (int i = 0; i < pluginCount; i++) {
                         output.append(Component.text(plugins[i], NamedTextColor.GREEN));
                         if (i + 1 < pluginCount) {
