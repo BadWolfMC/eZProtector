@@ -10,12 +10,13 @@
     <modules>
         <module>paper</module>
         <module>waterfall</module>
+        <module>velocity</module>
     </modules>
 
     <name>eZProtector</name>
     <description>Securing your server the easy way!</description>
     <url>https://github.com/BadWolfMC/eZProtector</url>
-    <version>1.2.0</version>
+    <version>1.3.0</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -43,6 +44,10 @@
         <repository>
             <id>paper-repo</id>
             <url>https://papermc.io/repo/repository/maven-public/</url>
+        </repository>
+        <repository>
+            <id>velocity-repo</id>
+            <url>https://nexus.velocitypowered.com/repository/maven-public/</url>
         </repository>
         <repository>
             <id>placeholderapi</id>
