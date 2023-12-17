@@ -12,8 +12,8 @@ package com.github.donotspampls.ezprotector.velocity.utilities;
 
 import com.moandjiezana.toml.Toml;
 import com.velocitypowered.api.proxy.Player;
-import net.kyori.text.TextComponent;
-import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.serializer.ComponentSerializer;
 
 public class MessageUtil {
 
@@ -44,7 +44,7 @@ public class MessageUtil {
     }
 
     public TextComponent placeholdersText(String args, Player player, String errorMessage, String command) {
-        return LegacyComponentSerializer.legacy().deserialize(args
+        return ComponentSerializer.deserialize(args
                 .replace("%player%", player.getUsername())
                 .replace("%errormessage%", errorMessage == null ? "" : color(errorMessage))
                 .replace("%command%", command == null ? "" : color(command)), '&'
