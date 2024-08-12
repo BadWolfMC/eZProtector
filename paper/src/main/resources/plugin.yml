@@ -3,7 +3,7 @@ version: ${parent.version}
 description: ${parent.description}
 authors: [DoNotSpamPls, dvargas135, Gianluca, mercurialmusic]
 website: https://github.com/DoNotSpamPls/eZProtector
-api-version: "1.20"
+api-version: "1.21"
 softdepend: [PlaceholderAPI]
 
 main: com.github.donotspampls.ezprotector.paper.Main
