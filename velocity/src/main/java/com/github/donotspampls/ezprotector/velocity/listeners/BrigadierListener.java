@@ -8,20 +8,19 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.github.donotspampls.ezprotector.waterfall.listeners;
+package com.github.donotspampls.ezprotector.velocity.listeners;
 
-import io.github.waterfallmc.waterfall.event.ProxyDefineCommandsEvent;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.plugin.Listener;
-import net.md_5.bungee.config.Configuration;
-import net.md_5.bungee.event.EventHandler;
+import com.moandjiezana.toml.Toml;
+import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.command.PlayerAvailableCommandsEvent;
+import com.velocitypowered.api.proxy.Player;
 
 import java.util.List;
 
-public class BrigadierListener implements Listener {
+public class BrigadierListener {
 
-    private final Configuration config;
-    public BrigadierListener(Configuration config) {
+    private final Toml config;
+    public BrigadierListener(Toml config) {
         this.config = config;
     }
 
@@ -30,20 +29,20 @@ public class BrigadierListener implements Listener {
      *
      * @param event The event which removes the tab completions from the client.
      */
-    @EventHandler
-    public void onCommandSend(ProxyDefineCommandsEvent event) {
-        if (!(event.getReceiver() instanceof ProxiedPlayer)) return;
-
+    @Subscribe
+    @SuppressWarnings({"UnstableApiUsage"})
+    public void onCommandSend(final PlayerAvailableCommandsEvent event) {
         if (config.getBoolean("tab-completion.blocked")) {
-            ProxiedPlayer player = (ProxiedPlayer) event.getReceiver();
-            List<String> blocked = config.getStringList("tab-completion.commands");
+            final Player player = event.getPlayer();
+            final List<String> blocked = config.getList("tab-completion.commands");
 
-            if (!config.getBoolean("tab-completion.whitelist"))
-                event.getCommands().values().removeIf(cmd ->
+            if (!config.getBoolean("tab-completion.whitelist")) {
+                event.getRootNode().getChildren().removeIf(cmd ->
                         !player.hasPermission("ezprotector.bypass.command.tabcomplete." + cmd.getName()) && blocked.contains(cmd.getName()));
-            else
-                event.getCommands().values().removeIf(cmd ->
+            } else {
+                event.getRootNode().getChildren().removeIf(cmd ->
                         !player.hasPermission("ezprotector.bypass.command.tabcomplete." + cmd.getName()) && !blocked.contains(cmd.getName()));
+            }
         }
     }
 

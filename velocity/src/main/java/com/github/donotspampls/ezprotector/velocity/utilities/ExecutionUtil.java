@@ -8,28 +8,27 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.github.donotspampls.ezprotector.waterfall.utilities;
+package com.github.donotspampls.ezprotector.velocity.utilities;
 
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.ProxyServer;
+import com.velocitypowered.api.proxy.ProxyServer;
+import net.kyori.text.TextComponent;
 
 public class ExecutionUtil {
 
     private final ProxyServer server;
-    public ExecutionUtil(ProxyServer server) {
+    public ExecutionUtil (ProxyServer server) {
         this.server = server;
     }
 
-    public void notifyAdmins(String message, String permission) {
-        if (message.trim().isEmpty()) return;
+    public void notifyAdmins(TextComponent message, String permission) {
+        if (message.isEmpty()) return;
 
-        server.getPlayers().stream()
+        server.getAllPlayers().stream()
                 .filter(admin -> admin.hasPermission(permission))
-                .forEach(admin -> admin.sendMessage(ChatColor.translateAlternateColorCodes('&', message)));
+                .forEach(admin -> admin.sendMessage(message));
     }
 
     public void executeConsoleCommand(String command) {
-        server.getPluginManager().dispatchCommand(server.getConsole(), command);
+        server.getCommandManager().executeAsync(server.getConsoleCommandSource(), command);
     }
-
 }
