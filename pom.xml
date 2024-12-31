@@ -9,7 +9,7 @@
 
     <modules>
         <module>paper</module>
-        <module>waterfall</module>
+        <module>velocity</module>
     </modules>
 
     <name>eZProtector</name>
