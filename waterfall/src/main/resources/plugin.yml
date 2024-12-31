@@ -1,4 +1,0 @@
-name: ${parent.name}
-main: com.github.donotspampls.ezprotector.waterfall.Main
-version: ${parent.version}
-author: DoNotSpamPls
