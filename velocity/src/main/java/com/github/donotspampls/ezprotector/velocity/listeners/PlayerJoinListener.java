@@ -14,7 +14,7 @@ import com.moandjiezana.toml.Toml;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import com.velocitypowered.api.proxy.Player;
-import net.kyori.text.TextComponent;
+import net.kyori.adventure.text.TextComponent;
 
 public class PlayerJoinListener {
 

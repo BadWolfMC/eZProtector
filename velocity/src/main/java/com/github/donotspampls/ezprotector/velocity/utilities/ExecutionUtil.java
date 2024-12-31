@@ -11,7 +11,7 @@
 package com.github.donotspampls.ezprotector.velocity.utilities;
 
 import com.velocitypowered.api.proxy.ProxyServer;
-import net.kyori.text.TextComponent;
+import net.kyori.adventure.text.TextComponent;
 
 public class ExecutionUtil {
 
