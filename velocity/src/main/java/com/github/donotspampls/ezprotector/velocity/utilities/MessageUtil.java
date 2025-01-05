@@ -14,6 +14,7 @@ import com.moandjiezana.toml.Toml;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.serializer.ComponentSerializer;
+import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
 
 public class MessageUtil {
 
