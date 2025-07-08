@@ -9,7 +9,7 @@ If you'd like to get more information on how the plugin works, you can read the 
 ## Building
 
 #### Requirements
-* Java 17 JDK or newer
+* Java 21 JDK or newer
 * Maven 3.x
 * Git
 
