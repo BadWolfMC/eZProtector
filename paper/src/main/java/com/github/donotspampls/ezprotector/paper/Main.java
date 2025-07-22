@@ -36,7 +36,7 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        if (!getServer().getBukkitVersion().matches("1.21.7-R0.1-SNAPSHOT")) {
+        if (!getServer().getBukkitVersion().matches("1.21.8-R0.1-SNAPSHOT")) {
             getLogger().severe("eZProtector is not supported on versions lower than 1.21.7!");
             getServer().getPluginManager().disablePlugin(this);
         } else {
