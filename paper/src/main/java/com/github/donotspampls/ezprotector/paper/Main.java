@@ -36,8 +36,8 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        if (!getServer().getBukkitVersion().matches("(26\\.(1\\.(?:[2-9]|[1-9][0-9]+)|(?:[2-9]|[1-9][0-9]+)\\.\\d+)|(?:2[7-9]|[3-9][0-9])\\.\\d+\\.\\d+)(?:[-.].*)?")) {
-            getLogger().severe("eZProtector is not supported on versions below 26.1.2!");
+        if (!getServer().getBukkitVersion().matches("(26\\.(2\\.(?:[2-9]|[1-9][0-9]+)|(?:[2-9]|[1-9][0-9]+)\\.\\d+)|(?:2[7-9]|[3-9][0-9])\\.\\d+\\.\\d+)(?:[-.].*)?")) {
+            getLogger().severe("eZProtector is not supported on versions below 26.2!");
             getServer().getPluginManager().disablePlugin(this);
         } else {
             saveDefaultConfig();
