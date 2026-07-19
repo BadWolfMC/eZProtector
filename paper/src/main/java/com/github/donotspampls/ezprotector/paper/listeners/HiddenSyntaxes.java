@@ -15,41 +15,41 @@ import com.github.donotspampls.ezprotector.paper.utilities.MessageUtil;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 import java.util.List;
+import java.util.Locale;
 
 public class HiddenSyntaxes implements Listener {
 
     private final Main plugin;
+
     public HiddenSyntaxes(Main plugin) {
         this.plugin = plugin;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void execute(PlayerCommandPreprocessEvent event) {
         FileConfiguration config = plugin.getConfig();
-        if (config.getBoolean("hidden-syntaxes.blocked")) {
-            Player player = event.getPlayer();
-            String command = event.getMessage().split(" ")[0].toLowerCase();
-            MessageUtil msgUtil = plugin.getMsgUtil();
-            List<String> whitelisted = config.getStringList("hidden-syntaxes.whitelisted");
+        if (!config.getBoolean("hidden-syntaxes.blocked")) return;
 
-            if (event.isCancelled()) return;
+        Player player = event.getPlayer();
+        String command = event.getMessage().split(" ")[0].toLowerCase(Locale.ROOT);
+        MessageUtil msgUtil = plugin.getMsgUtil();
+        List<String> whitelisted = config.getStringList("hidden-syntaxes.whitelisted");
 
-            if (command.contains(":") && !whitelisted.contains(command.replace("/", ""))
-                    && !player.hasPermission("ezprotector.bypass.command.hiddensyntaxes")) {
-                event.setCancelled(true);
+        if (command.contains(":") && !whitelisted.contains(command.replace("/", ""))
+                && !player.hasPermission("ezprotector.bypass.command.hiddensyntaxes")) {
+            event.setCancelled(true);
 
-                String errorMessage = config.getString("hidden-syntaxes.error-message");
-                if (errorMessage != null && !errorMessage.trim().isEmpty())
-                    player.sendMessage(msgUtil.placeholders(errorMessage, player, null, command));
+            String errorMessage = config.getString("hidden-syntaxes.error-message");
+            if (errorMessage != null && !errorMessage.isBlank())
+                player.sendMessage(msgUtil.component(errorMessage, player, null, command));
 
-                msgUtil.punishPlayers("hidden-syntaxes", player, errorMessage, command);
-                msgUtil.notifyAdmins("hidden-syntaxes", player, command, "command.hiddensyntaxes");
-            }
+            msgUtil.punishPlayers("hidden-syntaxes", player, errorMessage, command);
+            msgUtil.notifyAdmins("hidden-syntaxes", player, command, "command.hiddensyntaxes");
         }
     }
-
 }

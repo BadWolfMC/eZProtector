@@ -14,7 +14,7 @@
     <name>eZProtector</name>
     <description>Securing your server the easy way!</description>
     <url>https://github.com/BadWolfMC/eZProtector</url>
-    <version>1.3.3-26.2</version>
+    <version>1.4.0-26.2</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -45,7 +45,7 @@
         </repository>
         <repository>
             <id>placeholderapi</id>
-            <url>https://repo.helpch.at/releases//</url>
+            <url>https://repo.helpch.at/releases/</url>
         </repository>
     </repositories>
 

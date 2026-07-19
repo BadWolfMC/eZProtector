@@ -9,7 +9,7 @@ If you'd like to get more information on how the plugin works, you can read the 
 ## Building
 
 #### Requirements
-* Java 21 JDK or newer
+* Java 25 JDK or newer
 * Maven 3.x
 * Git
 
@@ -21,6 +21,23 @@ mvn clean package
 ```
 
 You can find the output jars in the `target` directories of the modules.
+
+## Message formatting
+
+eZProtector sends user-facing messages through Paper's Adventure API. Configuration messages support MiniMessage, including RGB colors and gradients:
+
+```yaml
+hidden-syntaxes:
+  error-message: "<gradient:#17B4E6:#5555FF><bold>eZProtector</bold></gradient> <white>That command syntax is forbidden!"
+```
+
+The default `message-format: auto` setting also keeps existing legacy `&` color-code messages working. Each individual message should use either MiniMessage or legacy formatting, not both. Set `message-format` to `minimessage` or `legacy` to enforce one format globally.
+
+When PlaceholderAPI is installed, ordinary `%placeholder%` values remain supported. In MiniMessage values, `<papi:placeholder_name>` is also available and safely converts legacy-formatted expansion output into an Adventure component; for example, `<papi:luckperms_prefix>`.
+
+## Tab-completion filtering
+
+Modern clients receive top-level command names through Brigadier and request some argument suggestions from the server separately. eZProtector filters both paths. `ezprotector.bypass.command.tabcomplete` bypasses all filtering; `ezprotector.bypass.command.tabcomplete.<command>` bypasses one command, including its namespaced form.
 
 ## License
 eZProtector is licensed under the GPLv3 license. Please see [`LICENSE`](https://github.com/BadWolfMC/eZProtector/blob/master/LICENSE) for more information.

@@ -10,42 +10,32 @@
 
 package com.github.donotspampls.ezprotector.paper.listeners;
 
-import com.github.donotspampls.ezprotector.paper.Main;
-import org.bukkit.configuration.file.FileConfiguration;
+import com.github.donotspampls.ezprotector.paper.utilities.TabCompletionPolicy;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandSendEvent;
 
-import java.util.List;
-
 public class BrigadierListener implements Listener {
 
-    private final Main plugin;
-    public BrigadierListener(Main plugin) {
-        this.plugin = plugin;
+    private final TabCompletionPolicy policy;
+
+    public BrigadierListener(TabCompletionPolicy policy) {
+        this.policy = policy;
     }
 
     /**
-     * Removes forbidden commands from Brigadier's command tree (1.13)
+     * Removes configured top-level commands from the command tree sent to a player.
      *
-     * @param event The event which removes the tab completions from the client.
+     * @param event the command-send event whose mutable command collection is filtered
      */
     @EventHandler
     public void onCommandSend(PlayerCommandSendEvent event) {
-        FileConfiguration config = plugin.getConfig();
-        
-        if (config.getBoolean("tab-completion.blocked")) {
-            Player player = event.getPlayer();
-            List<String> blocked = config.getStringList("tab-completion.commands");
+        if (!policy.isEnabled()) return;
 
-            if (!config.getBoolean("tab-completion.whitelist"))
-                event.getCommands().removeIf(cmd ->
-                        !player.hasPermission("ezprotector.bypass.command.tabcomplete." + cmd) && blocked.contains(cmd));
-            else
-                event.getCommands().removeIf(cmd ->
-                        !player.hasPermission("ezprotector.bypass.command.tabcomplete." + cmd) && !blocked.contains(cmd));
-        }
+        Player player = event.getPlayer();
+        if (policy.hasGlobalBypass(player)) return;
+
+        event.getCommands().removeIf(command -> policy.shouldHide(player, command));
     }
-
 }

@@ -2,7 +2,7 @@ name: ${parent.name}
 version: ${parent.version}
 description: ${parent.description}
 authors: [DoNotSpamPls, dvargas135, Gianluca, mercurialmusic]
-website: https://github.com/DoNotSpamPls/eZProtector
+website: https://github.com/BadWolfMC/eZProtector
 api-version: "26.2"
 softdepend: [PlaceholderAPI]
 
@@ -34,7 +34,7 @@ permissions:
     description: "Notifies about players that try to use a command containing the : character"
     default: op
   ezprotector.notify.command.plugins:
-    description: Notifies about players that try to see the server version (only if custom-plugins is enabled)
+    description: Notifies about players that try to see the server plugins (only if custom-plugins is enabled)
     default: op
   ezprotector.notify.command.version:
     description: Notifies about players that try to see the server version (only if custom-version is enabled)
@@ -64,7 +64,7 @@ permissions:
     default: op
 
   ezprotector.bypass:
-    descrption: Allows the usage of all features blocked by the plugin.
+    description: Allows the usage of all features blocked by the plugin.
     children:
       ezprotector.bypass.command: true
       ezprotector.bypass.mod: true
