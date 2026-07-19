@@ -10,104 +10,84 @@
 
 package com.github.donotspampls.ezprotector.paper;
 
-import com.github.donotspampls.ezprotector.paper.listeners.*;
+import com.github.donotspampls.ezprotector.paper.listeners.BrigadierListener;
+import com.github.donotspampls.ezprotector.paper.listeners.ByteMessageListener;
+import com.github.donotspampls.ezprotector.paper.listeners.CustomCommands;
+import com.github.donotspampls.ezprotector.paper.listeners.FakeCommands;
+import com.github.donotspampls.ezprotector.paper.listeners.HiddenSyntaxes;
+import com.github.donotspampls.ezprotector.paper.listeners.PlayerJoinListener;
+import com.github.donotspampls.ezprotector.paper.listeners.TabCompletionListener;
 import com.github.donotspampls.ezprotector.paper.utilities.ExecutionUtil;
 import com.github.donotspampls.ezprotector.paper.utilities.MessageUtil;
-import com.github.donotspampls.ezprotector.paper.utilities.PaperLib;
-import net.md_5.bungee.api.chat.TextComponent;
+import com.github.donotspampls.ezprotector.paper.utilities.TabCompletionPolicy;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class Main extends JavaPlugin {
 
-    // Mod channels
-    public static String ZIG;
-    public static String BSM;
-    public static String MCBRAND;
-    public static String SCHEMATICA;
-    public static String WDLINIT;
-    public static String WDLCONTROL;
+    // Mod channels used by supported modern Paper versions.
+    public static final String ZIG = "the5zigmod:5zig_set";
+    public static final String BSM = "bsm:settings";
+    public static final String MCBRAND = "minecraft:brand";
+    public static final String SCHEMATICA = "dev:null"; // Schematica has no 1.13+ channel.
+    public static final String WDLINIT = "wdl:init";
+    public static final String WDLCONTROL = "wdl:control";
 
     private boolean papi = false; // is PlaceholderAPI available?
-
     private MessageUtil msgUtil;
+    private TabCompletionPolicy tabCompletionPolicy;
 
     @Override
     public void onEnable() {
-        if (!getServer().getBukkitVersion().matches("(26\\.(2\\.(?:[2-9]|[1-9][0-9]+)|(?:[2-9]|[1-9][0-9]+)\\.\\d+)|(?:2[7-9]|[3-9][0-9])\\.\\d+\\.\\d+)(?:[-.].*)?")) {
-            getLogger().severe("eZProtector is not supported on versions below 26.2!");
-            getServer().getPluginManager().disablePlugin(this);
-        } else {
-            saveDefaultConfig();
+        // Paper enforces the minimum supported version through plugin.yml's api-version.
+        saveDefaultConfig();
 
-            if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) papi = true;
+        papi = getServer().getPluginManager().getPlugin("PlaceholderAPI") != null;
 
-            ExecutionUtil execUtil = new ExecutionUtil(getServer());
-            msgUtil = new MessageUtil(this, execUtil, papi);
-            ByteMessageListener bml = new ByteMessageListener(this, execUtil, msgUtil);
+        ExecutionUtil execUtil = new ExecutionUtil(getServer());
+        msgUtil = new MessageUtil(this, execUtil, papi);
+        tabCompletionPolicy = new TabCompletionPolicy(this);
+        ByteMessageListener bml = new ByteMessageListener(this, execUtil, msgUtil);
 
-            // Check if the server is 1.13 or above
-            boolean newerversion;
-            try {
-                Class.forName("org.bukkit.entity.Dolphin");
-                newerversion = true;
-            } catch (ClassNotFoundException ignored) {
-                newerversion = false;
-            }
+        // The command tree listener hides root commands; the tab-completion listener
+        // blocks server-generated argument suggestions for those commands.
+        getServer().getPluginManager().registerEvents(new BrigadierListener(tabCompletionPolicy), this);
+        getServer().getPluginManager().registerEvents(new TabCompletionListener(tabCompletionPolicy), this);
 
-            // Set mod channels
-            if (!newerversion) {
-                ZIG = "5zig_Set";
-                BSM = "BSM";
-                MCBRAND = "MC|Brand";
-                SCHEMATICA = "schematica";
-                WDLINIT = "WDL|INIT";
-                WDLCONTROL = "WDL|CONTROL";
+        Objects.requireNonNull(getCommand("ezp"), "Command 'ezp' is missing from plugin.yml")
+                .setExecutor(this);
 
-                getServer().getPluginManager().registerEvents(new TabCompletionListener(this), this);
-            } else {
-                ZIG = "the5zigmod:5zig_set";
-                BSM = "bsm:settings";
-                MCBRAND = "minecraft:brand";
-                SCHEMATICA = "dev:null"; // no schematica for 1.13+
-                WDLINIT = "wdl:init";
-                WDLCONTROL = "wdl:control";
+        getServer().getMessenger().registerIncomingPluginChannel(this, ZIG, bml);
+        getServer().getMessenger().registerIncomingPluginChannel(this, BSM, bml);
+        getServer().getMessenger().registerIncomingPluginChannel(this, MCBRAND, bml);
+        getServer().getMessenger().registerIncomingPluginChannel(this, SCHEMATICA, bml);
+        getServer().getMessenger().registerIncomingPluginChannel(this, WDLINIT, bml);
 
-                getServer().getPluginManager().registerEvents(new BrigadierListener(this), this);
-            }
+        getServer().getMessenger().registerOutgoingPluginChannel(this, ZIG);
+        getServer().getMessenger().registerOutgoingPluginChannel(this, BSM);
+        getServer().getMessenger().registerOutgoingPluginChannel(this, SCHEMATICA);
+        getServer().getMessenger().registerOutgoingPluginChannel(this, WDLCONTROL);
 
-            getCommand("ezp").setExecutor(this);
-
-            getServer().getMessenger().registerIncomingPluginChannel(this, ZIG, bml);
-            getServer().getMessenger().registerIncomingPluginChannel(this, BSM, bml);
-            getServer().getMessenger().registerIncomingPluginChannel(this, MCBRAND, bml);
-            getServer().getMessenger().registerIncomingPluginChannel(this, SCHEMATICA, bml);
-            getServer().getMessenger().registerIncomingPluginChannel(this, WDLINIT, bml);
-
-            getServer().getMessenger().registerOutgoingPluginChannel(this, ZIG);
-            getServer().getMessenger().registerOutgoingPluginChannel(this, BSM);
-            getServer().getMessenger().registerOutgoingPluginChannel(this, SCHEMATICA);
-            getServer().getMessenger().registerOutgoingPluginChannel(this, WDLCONTROL);
-
-            getServer().getPluginManager().registerEvents(new CustomCommands(this), this);
-            getServer().getPluginManager().registerEvents(new FakeCommands(this), this);
-            getServer().getPluginManager().registerEvents(new HiddenSyntaxes(this), this);
-            getServer().getPluginManager().registerEvents(new PlayerJoinListener(this), this);
-
-            // Suggest Paper to unsuspecting server owners
-            PaperLib.suggestPaper(this);
-        }
+        getServer().getPluginManager().registerEvents(new CustomCommands(this), this);
+        getServer().getPluginManager().registerEvents(new FakeCommands(this), this);
+        getServer().getPluginManager().registerEvents(new HiddenSyntaxes(this), this);
+        getServer().getPluginManager().registerEvents(new PlayerJoinListener(this), this);
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
         if (args.length != 1) return false;
 
-        if (args[0].equals("reload")) {
+        if (args[0].equalsIgnoreCase("reload")) {
             reloadConfig();
-            sender.sendMessage(new TextComponent("Config reloaded!"));
+            tabCompletionPolicy.reload();
+            sender.sendMessage(Component.text("Config reloaded!", NamedTextColor.GREEN));
             return true;
         }
 
@@ -117,5 +97,4 @@ public class Main extends JavaPlugin {
     public MessageUtil getMsgUtil() {
         return msgUtil;
     }
-
 }

@@ -10,25 +10,27 @@
 
 package com.github.donotspampls.ezprotector.paper.utilities;
 
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Server;
 
 public class ExecutionUtil {
 
     private final Server server;
+
     public ExecutionUtil(Server server) {
         this.server = server;
     }
 
-    public void notifyAdmins(String message, String permission) {
-        if (message.trim().isEmpty()) return;
+    public void notifyAdmins(Component message, String permission) {
+        if (message.equals(Component.empty())) return;
 
         server.getOnlinePlayers().stream()
                 .filter(admin -> admin.hasPermission(permission))
-                .forEach(admin -> admin.sendMessage(ChatColor.translateAlternateColorCodes('&', message)));
+                .forEach(admin -> admin.sendMessage(message));
     }
 
     public void executeConsoleCommand(String command) {
+        if (command == null || command.isBlank()) return;
         server.dispatchCommand(server.getConsoleSender(), command);
     }
 }

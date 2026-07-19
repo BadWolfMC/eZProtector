@@ -22,11 +22,12 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 public class CustomCommands implements Listener {
 
     private final Main plugin;
+
     public CustomCommands(Main plugin) {
         this.plugin = plugin;
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void execute(PlayerCommandPreprocessEvent event) {
         FileConfiguration config = plugin.getConfig();
         Player player = event.getPlayer();
@@ -39,16 +40,14 @@ public class CustomCommands implements Listener {
                     event.setCancelled(true);
 
                     String errorMessage = config.getString("custom-commands.error-message");
-                    if (errorMessage != null && !errorMessage.trim().isEmpty())
-                        player.sendMessage(msgUtil.placeholders(errorMessage, player, null, command));
+                    if (errorMessage != null && !errorMessage.isBlank())
+                        player.sendMessage(msgUtil.component(errorMessage, player, null, command));
 
                     msgUtil.punishPlayers("custom-commands", player, errorMessage, command);
                     msgUtil.notifyAdmins("custom-commands", player, command, "command.custom");
-
                     break;
                 }
             }
         }
     }
-
 }

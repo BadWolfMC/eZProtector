@@ -1,10 +1,18 @@
 # eZProtector | Version ${project.version}
 # To see what are the placeholders available to you, read the information page here: https://git.io/vpDio
 
+# Message formatting mode: auto, minimessage, or legacy.
+# "auto" keeps existing &-color messages working and recognizes MiniMessage tags
+# such as <#17B4E6>hex</#17B4E6> and <gradient:#17B4E6:#5555FF>gradients</gradient>.
+# Use one formatting style per message; do not mix & codes and MiniMessage tags in the same value.
+message-format: auto
+
 # This module blocks certain commands from being tab completed
 tab-completion:
   blocked: true
   # If this is set to true, the commands in the list will be THE ONLY ones to be tab completed
+  # Global bypass: ezprotector.bypass.command.tabcomplete
+  # Per-command bypass: ezprotector.bypass.command.tabcomplete.<command>
   whitelist: false
   commands:
   - '?'
@@ -23,7 +31,7 @@ tab-completion:
   - ver
   - version
 
-# This blocks players from using commands such as /bukkit:help or /essentials:warp, since they be used to bypass blocks
+# This blocks players from using commands such as /bukkit:help or /essentials:warp, since they can be used to bypass blocks
 hidden-syntaxes:
   blocked: true
   error-message: "&7[&aeZProtector&7]&f That command syntax is forbidden!"

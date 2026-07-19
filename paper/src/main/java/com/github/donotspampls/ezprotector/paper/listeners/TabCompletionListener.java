@@ -10,52 +10,36 @@
 
 package com.github.donotspampls.ezprotector.paper.listeners;
 
-import com.github.donotspampls.ezprotector.paper.Main;
-import org.bukkit.configuration.file.FileConfiguration;
+import com.github.donotspampls.ezprotector.paper.utilities.TabCompletionPolicy;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.TabCompleteEvent;
 
-import java.util.List;
-
 public class TabCompletionListener implements Listener {
 
-    private final Main plugin;
-    public TabCompletionListener(Main plugin) {
-        this.plugin = plugin;
+    private final TabCompletionPolicy policy;
+
+    public TabCompletionListener(TabCompletionPolicy policy) {
+        this.policy = policy;
     }
 
     /**
-     * Checks if a player is tab completing a forbidden command. (1.12)
+     * Blocks server-generated argument suggestions for configured commands.
+     * Top-level command names are filtered separately by {@link BrigadierListener}.
      *
-     * @param event The tab complete event from which other information is gathered.
+     * @param event the tab-completion request and generated suggestions
      */
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onTabComplete(TabCompleteEvent event) {
-        FileConfiguration config = plugin.getConfig();
+        if (!event.isCommand() || !(event.getSender() instanceof Player player)) return;
+        if (!policy.isEnabled() || policy.hasGlobalBypass(player)) return;
 
-        if (config.getBoolean("tab-completion.blocked") && event.getSender() instanceof Player) {
-            Player player = (Player) event.getSender();
-            String cmd = event.getBuffer().split(" ")[0].replace("/", "");
-            List<String> completions = event.getCompletions();
-            List<String> blocked = config.getStringList("tab-completion.commands");
-
-            if (completions.isEmpty()) return;
-
-            if (!player.hasPermission("ezprotector.bypass.command.tabcomplete." + cmd)) {
-                if (!config.getBoolean("tab-completion.whitelist")) {
-                    completions.removeIf(lcmd -> blocked.contains(lcmd.replace("/", "")));
-                    if (blocked.contains(cmd)) event.setCancelled(true);
-                } else {
-                    if (completions.get(0).startsWith("/")) {
-                        completions.removeIf(lcmd -> !blocked.contains(lcmd.replace("/", "")));
-                    } else if (!blocked.contains(cmd))
-                        event.setCancelled(true);
-                }
-                event.setCompletions(completions);
-            }
+        String command = TabCompletionPolicy.commandFromBuffer(event.getBuffer());
+        if (policy.shouldHide(player, command)) {
+            event.setCancelled(true);
+            event.getCompletions().clear();
         }
     }
-
 }
